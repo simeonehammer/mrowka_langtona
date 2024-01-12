@@ -35,6 +35,23 @@ typedef struct
 
 } Mrowka;
 
+
+void wyswietl(int **plansza, int m, int n){
+	
+	 for (int i = 0; i < m; ++i)
+        {
+                for (int j = 0; j < n; ++j)
+                {
+                        if(plansza[i][j]==1){
+				printf("# ");
+			}else{
+				printf(" ");
+			}
+                }
+                printf("\n");
+        }
+}
+
 void RuchMrowki(Mrowka *mrowka, int **plansza, int m, int n)
 {
 	if (plansza[mrowka->y][mrowka->x] == 0)
@@ -222,14 +239,18 @@ int main(int argc, char *argv[])
 		RuchMrowki(&mrowka, plansza, m, n);
 	}
 
-	for (int i = 0; i < m; ++i)
-	{
-		for (int j = 0; j < n; ++j)
-		{
-			printf("%d", plansza[i][j]);
-		}
-		printf("\n");
-	}
+	//for (int i = 0; i < m; ++i)
+	//{
+	//	for (int j = 0; j < n; ++j)
+	//	{
+	//		printf("%d ", plansza[i][j]);
+	//	}
+	//	printf("\n");
+	//}
+
+
+	wyswietl(plansza, m, n);
+
 
 	return 0;
 }
