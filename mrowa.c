@@ -45,7 +45,7 @@ void wyswietl(int **plansza, int m, int n){
                         if(plansza[i][j]==1){
 				printf("# ");
 			}else{
-				printf(" ");
+				printf("  ");
 			}
                 }
                 printf("\n");
