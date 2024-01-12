@@ -19,107 +19,217 @@
 // ARROW_WEST_WHITE:◁
 // ARROW_WEST_BLACK:◀
 
-enum kierunki{
-	GORA,
-	DOL,
-	PRAWO,
-	LEWO
+enum kierunki
+{
+	N,
+	S,
+	W,
+	E
 };
 
-typedef struct {
+typedef struct
+{
 	int x;
 	int y;
 	enum kierunki kierunek;
 
 } Mrowka;
 
+void RuchMrowki(Mrowka *mrowka, int **plansza, int m, int n)
+{
+	if (plansza[mrowka->y][mrowka->x] == 0)
+	{
+		switch (mrowka->kierunek)
+		{
+		case N:
+			mrowka->kierunek = E;
+			break;
+		case S:
+			mrowka->kierunek = W;
+			break;
+		case W:
+			mrowka->kierunek = N;
+			break;
+		case E:
+			mrowka->kierunek = S;
+			break;
+		default:
+			break;
+		}
+		plansza[mrowka->y][mrowka->x] = 1;
+		switch (mrowka->kierunek)
+		{
+		case N:
+			mrowka->y--;
+			break;
+		case S:
+			mrowka->y++;
+			break;
+		case W:
+			mrowka->x--;
+			break;
+		case E:
+			mrowka->x++;
+			break;
+		}
+		if (mrowka->x > n - 1)
+		{
+			mrowka->x = 0;
+		}
 
-int main(int argc, char *argv[]){
+		if (mrowka->y > m - 1)
+		{
+			mrowka->y = 0;
+		}
+
+		if (mrowka->x < 0)
+		{
+			mrowka->x = n - 1;
+		}
+
+		if (mrowka->y < 0)
+		{
+			mrowka->y = m - 1;
+		}
+	}
+	else if (plansza[mrowka->y][mrowka->x])
+	{
+		switch (mrowka->kierunek)
+		{
+		case N:
+			mrowka->kierunek = W;
+			break;
+		case S:
+			mrowka->kierunek = E;
+			break;
+		case W:
+			mrowka->kierunek = S;
+			break;
+		case E:
+			mrowka->kierunek = N;
+			break;
+		}
+		plansza[mrowka->y][mrowka->x] = 0;
+		switch (mrowka->kierunek)
+		{
+		case N:
+			mrowka->y--;
+			break;
+		case S:
+			mrowka->y++;
+			break;
+		case W:
+			mrowka->x--;
+			break;
+		case E:
+			mrowka->x++;
+			break;
+		}
+		if (mrowka->x > n - 1)
+		{
+			mrowka->x = 0;
+		}
+
+		if (mrowka->y > m - 1)
+		{
+			mrowka->y = 0;
+		}
+
+		if (mrowka->x < 0)
+		{
+			mrowka->x = n - 1;
+		}
+
+		if (mrowka->y < 0)
+		{
+			mrowka->y = m - 1;
+		}
+	}
+}
+
+int main(int argc, char *argv[])
+{
 
 	char x = "█";
 	int opt;
 	int m, n, i;
 	char *s;
+	char *d;
 
-    	while ((opt = getopt(argc, argv, "m:n:i:f:d:")) != -1) {
-        	switch (opt) {
+	while ((opt = getopt(argc, argv, "m:n:i:f:d:")) != -1)
+	{
+		switch (opt)
+		{
 
-            	case 'm':
+		case 'm':
 			m = atoi(optarg);
 			break;
-            	case 'n':
+		case 'n':
 			n = atoi(optarg);
 			break;
-            	case 'i':
-              		i = atoi(optarg);
+		case 'i':
+			i = atoi(optarg);
 			break;
-		case 'd': 
-			d 
-            	case 'f':
-                	s = optarg;
+		case 'd':
+			d = optarg;
+		case 'f':
+			s = optarg;
 			break;
-            	case '?':
+		case '?':
 			printf("Nieznana opcja:: %c\n", optopt);
-                	break;
-        	}
-    	}
-
-	Mrowka mrowka = {m/2, n/2, 0};
-
-	
-	switch(d){
-	
-		case "GORA": 
-			mrowka.kierunek = GORA;
 			break;
-		case "DOL":
-			mrowka.kierunek = DOL;
-			break;
-		case "LEWO":
-			mrowka.kierunek = LEWO;
-			break;
-		case "PRAWO"
-			mrowka.kierunek = PRAWO;
-			break;
-		default
-			printf("BLAD");
-			return 1;
+		}
 	}
 
+	Mrowka mrowka = {m / 2, n / 2, 0};
 
-    	int **plansza = (int**)malloc(m * sizeof(int *));
-	for(int i = 0; i < m; i++) {
+	switch (*d)
+	{
+
+	case 'N':
+		mrowka.kierunek = N;
+		break;
+	case 'S':
+		mrowka.kierunek = S;
+		break;
+	case 'W':
+		mrowka.kierunek = W;
+		break;
+	case 'E':
+		mrowka.kierunek = E;
+		break;
+	default:
+		printf("BLAD");
+		return 1;
+	}
+
+	int **plansza = (int **)malloc(m * sizeof(int *));
+	for (int i = 0; i < m; i++)
+	{
 		plansza[i] = (int *)malloc(n * sizeof(int));
 	}
 
-	for (int i = 0; i < m; ++i) {
-        	for (int j = 0; j < n; ++j) {
-            		plansza[i][j] = 0;
-        	}
-    	}
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			plansza[i][j] = 0;
+		}
+	}
 
-	
+	for (int j = 0; j < i; ++j)
+	{
+		RuchMrowki(&mrowka, plansza, m, n);
+	}
 
-	
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			printf("%d", plansza[i][j]);
+		}
+		printf("\n");
+	}
 
-
-
-
-
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            printf("%d", plansza[i][j]);
-        }
-	printf("\n");
-    }
-
-    return 0;
+	return 0;
 }
-
-
-
-
-
-
-
-
