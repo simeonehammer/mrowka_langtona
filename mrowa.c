@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#define BUFFER 50
 // LINE_VERTICAL:│
 // LINE_HORIZONTAL:─
 // LINE_DOWN_RIGHT:┌
@@ -36,20 +36,56 @@ typedef struct
 } Mrowka;
 
 
-void wyswietl(int **plansza, int m, int n){
+void wyswietl(int **plansza,Mrowka *mrowka, int m, int n, FILE *out){
 	
 	 for (int i = 0; i < m; ++i)
         {
                 for (int j = 0; j < n; ++j)
                 {
+			if ( i == mrowka->y && j == mrowka->x ){
+				if(plansza[i][j] == 0){
+					switch(mrowka->kierunek)
+					{
+						case N:
+							fprintf(out, "△");
+							break;
+						case S: 
+							fprintf(out, "▽");
+							break;
+						case W: 
+							fprintf(out, "◁");
+							break;
+						case E: 
+							fprintf(out, "▷");
+							break;
+					}
+				} else {
+					switch(mrowka->kierunek){
+						case N:
+                                                        fprintf(out, "▲");
+                                                        break;
+						case S:
+                                                        fprintf(out, "▼");
+                                                        break;
+						case W:
+                                                        fprintf(out, "◀");
+                                                        break;
+						case E:
+                                                        fprintf(out, "▶");
+                                                        break;	
+					}
+				
+				} 
+			}
                         if(plansza[i][j]==1){
-				printf("# ");
+				fprintf(out, "█");
 			}else{
-				printf("  ");
+				fprintf(out, " ");
 			}
                 }
-                printf("\n");
-        }
+                fprintf(out, "\n");
+        
+	}
 }
 
 void RuchMrowki(Mrowka *mrowka, int **plansza, int m, int n)
@@ -170,7 +206,7 @@ int main(int argc, char *argv[])
 	char x = "█";
 	int opt;
 	int m, n, i;
-	char *s;
+	char *s = "";
 	char *d;
 
 	while ((opt = getopt(argc, argv, "m:n:i:f:d:")) != -1)
@@ -189,14 +225,28 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':
 			d = optarg;
+			break;
 		case 'f':
-			s = optarg;
+			s = optarg; 
 			break;
 		case '?':
 			printf("Nieznana opcja:: %c\n", optopt);
 			break;
 		}
 	}
+
+	FILE *out;
+
+	if(s == ""){
+		out = stdout;
+	} else {
+
+		char nazwa_pliku[BUFFER];
+		sprintf(nazwa_pliku, "%s.txt", s);
+	        out = fopen(nazwa_pliku, "w");	
+	}
+
+
 
 	Mrowka mrowka = {m / 2, n / 2, 0};
 
@@ -239,17 +289,8 @@ int main(int argc, char *argv[])
 		RuchMrowki(&mrowka, plansza, m, n);
 	}
 
-	//for (int i = 0; i < m; ++i)
-	//{
-	//	for (int j = 0; j < n; ++j)
-	//	{
-	//		printf("%d ", plansza[i][j]);
-	//	}
-	//	printf("\n");
-	//}
 
-
-	wyswietl(plansza, m, n);
+	wyswietl(plansza, &mrowka ,m , n, out);
 
 
 	return 0;
