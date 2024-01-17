@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include <time.h>
+
 #define BUFFER 50
 // LINE_VERTICAL:│
 // LINE_HORIZONTAL:─
@@ -35,56 +38,63 @@ typedef struct
 
 } Mrowka;
 
+void wyswietl(int **plansza, Mrowka *mrowka, int m, int n, FILE *out)
+{
 
-void wyswietl(int **plansza,Mrowka *mrowka, int m, int n, FILE *out){
-	
-	 for (int i = 0; i < m; ++i)
-        {
-                for (int j = 0; j < n; ++j)
-                {
-			if ( i == mrowka->y && j == mrowka->x ){
-				if(plansza[i][j] == 0){
-					switch(mrowka->kierunek)
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			if (i == mrowka->y && j == mrowka->x)
+			{
+				if (plansza[i][j] == 0)
+				{
+					switch (mrowka->kierunek)
 					{
-						case N:
-							fprintf(out, "△");
-							break;
-						case S: 
-							fprintf(out, "▽");
-							break;
-						case W: 
-							fprintf(out, "◁");
-							break;
-						case E: 
-							fprintf(out, "▷");
-							break;
+					case N:
+						fprintf(out, "△");
+						break;
+					case S:
+						fprintf(out, "▽");
+						break;
+					case W:
+						fprintf(out, "◁");
+						break;
+					case E:
+						fprintf(out, "▷");
+						break;
 					}
-				} else {
-					switch(mrowka->kierunek){
-						case N:
-                                                        fprintf(out, "▲");
-                                                        break;
-						case S:
-                                                        fprintf(out, "▼");
-                                                        break;
-						case W:
-                                                        fprintf(out, "◀");
-                                                        break;
-						case E:
-                                                        fprintf(out, "▶");
-                                                        break;	
+				}
+				else
+				{
+					switch (mrowka->kierunek)
+					{
+					case N:
+						fprintf(out, "▲");
+						break;
+					case S:
+						fprintf(out, "▼");
+						break;
+					case W:
+						fprintf(out, "◀");
+						break;
+					case E:
+						fprintf(out, "▶");
+						break;
 					}
-				
-				} 
+				}
 			}
-                        if(plansza[i][j]==1){
-				fprintf(out, "█");
-			}else{
-				fprintf(out, " ");
+
+			else if (plansza[i][j] == 1)
+			{
+				fprintf(out, "■");
 			}
-                }
-                fprintf(out, "\n");
-        
+			else
+			{
+				fprintf(out, "□");
+			}
+		}
+		fprintf(out, "\n");
 	}
 }
 
@@ -203,13 +213,13 @@ void RuchMrowki(Mrowka *mrowka, int **plansza, int m, int n)
 int main(int argc, char *argv[])
 {
 
-	char x = "█";
-	int opt;
+	int opt, r = 0;
 	int m, n, i;
 	char *s = "";
 	char *d;
+	char *l = "";
 
-	while ((opt = getopt(argc, argv, "m:n:i:f:d:")) != -1)
+	while ((opt = getopt(argc, argv, "m:n:i:f:d:l:r:")) != -1)
 	{
 		switch (opt)
 		{
@@ -227,7 +237,13 @@ int main(int argc, char *argv[])
 			d = optarg;
 			break;
 		case 'f':
-			s = optarg; 
+			s = optarg;
+			break;
+		case 'l':
+			l = optarg;
+			break;
+		case 'r':
+			r = atoi(optarg);
 			break;
 		case '?':
 			printf("Nieznana opcja:: %c\n", optopt);
@@ -236,19 +252,28 @@ int main(int argc, char *argv[])
 	}
 
 	FILE *out;
+	FILE *in;
+	Mrowka mrowka;
 
-	if(s == ""){
+	if (s == "")
+	{
 		out = stdout;
-	} else {
+	}
+	else
+	{
 
 		char nazwa_pliku[BUFFER];
 		sprintf(nazwa_pliku, "%s.txt", s);
-	        out = fopen(nazwa_pliku, "w");	
+		out = fopen(nazwa_pliku, "w");
 	}
 
-
-
-	Mrowka mrowka = {m / 2, n / 2, 0};
+	int **plansza = (int **)malloc(m * sizeof(int *));
+	for (int i = 0; i < m; i++)
+	{
+		plansza[i] = (int *)malloc(n * sizeof(int));
+	}
+	mrowka.x = m / 2;
+	mrowka.y = n / 2;
 
 	switch (*d)
 	{
@@ -270,17 +295,123 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	int **plansza = (int **)malloc(m * sizeof(int *));
-	for (int i = 0; i < m; i++)
+	if (r == 0)
 	{
-		plansza[i] = (int *)malloc(n * sizeof(int));
-	}
-
-	for (int i = 0; i < m; ++i)
-	{
-		for (int j = 0; j < n; ++j)
+		if (strcmp(l, "") == 0)
 		{
-			plansza[i][j] = 0;
+			for (int i = 0; i < m; ++i)
+			{
+				for (int j = 0; j < n; ++j)
+				{
+					plansza[i][j] = 0;
+				}
+			}
+		}
+		else
+		{
+			in = fopen(l, "r");
+			char bufor[4];
+			char nowa_linia[2];
+			for (int i = 0; i < m; ++i)
+			{
+				for (int j = 0; j < n; ++j)
+				{
+					if (fgets(bufor, 4, in) != NULL)
+					{
+
+						if (strcmp(bufor, "\n") == 0)
+						{
+							i--;
+							break;
+						}
+
+						else if (strcmp(bufor, "□") == 0)
+						{
+							plansza[i][j] = 0;
+						}
+						else if (strcmp(bufor, "■") == 0)
+						{
+							plansza[i][j] = 1;
+						}
+						else if (strcmp(bufor, "△") == 0)
+						{
+							plansza[i][j] = 0;
+							mrowka.kierunek = N;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "▷") == 0)
+						{
+							plansza[i][j] = 0;
+							mrowka.kierunek = E;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "▽") == 0)
+						{
+							plansza[i][j] = 0;
+							mrowka.kierunek = S;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "◁") == 0)
+						{
+							plansza[i][j] = 0;
+							mrowka.kierunek = W;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "▲") == 0)
+						{
+							plansza[i][j] = 1;
+							mrowka.kierunek = N;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "▶") == 0)
+						{
+							plansza[i][j] = 1;
+							mrowka.kierunek = E;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "▼") == 0)
+						{
+							plansza[i][j] = 1;
+							mrowka.kierunek = S;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+						else if (strcmp(bufor, "◀") == 0)
+						{
+							plansza[i][j] = 1;
+							mrowka.kierunek = W;
+							mrowka.x = j;
+							mrowka.y = i;
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		srand(time(NULL));
+		int prawdopodobienstwo = r;
+		for (int i = 0; i < m; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+
+				if (rand() % 100 + 1 <= prawdopodobienstwo)
+				{
+					plansza[i][j] = 1;
+				}
+				else
+				{
+					plansza[i][j] = 0;
+				}
+			}
 		}
 	}
 
@@ -289,9 +420,7 @@ int main(int argc, char *argv[])
 		RuchMrowki(&mrowka, plansza, m, n);
 	}
 
-
-	wyswietl(plansza, &mrowka ,m , n, out);
-
+	wyswietl(plansza, &mrowka, m, n, out);
 
 	return 0;
 }
