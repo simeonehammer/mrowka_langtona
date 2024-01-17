@@ -68,18 +68,6 @@ int main(int argc, char **argv)
 	FILE *in;
 	Mrowka mrowka;
 
-	if (s == "")
-	{
-		out = stdout;
-	}
-	else
-	{
-
-		char nazwa_pliku[BUFFER];
-		sprintf(nazwa_pliku, "%s.txt", s);
-		out = fopen(nazwa_pliku, "w");
-	}
-
 	int **plansza = (int **)malloc(m * sizeof(int *));
 	for (int i = 0; i < m; i++)
 	{
@@ -231,9 +219,22 @@ int main(int argc, char **argv)
 	for (int j = 0; j < i; ++j)
 	{
 		RuchMrowki(&mrowka, plansza, m, n);
-	}
+		if (strcmp(s, "") == 0)
+		{
+			out = stdout;
+		}
+		else
+		{
 
-	wyswietl(plansza, &mrowka, m, n, out);
+			char nazwa_pliku[BUFFER];
+			sprintf(nazwa_pliku, "%s_%d", s, j + 1);
+			out = fopen(nazwa_pliku, "w");
+		}
+		wyswietl(plansza, &mrowka, m, n, out);
+		printf("\n");
+		printf("\n");
+		printf("\n");
+	}
 
 	return 0;
 }
