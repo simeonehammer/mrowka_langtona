@@ -227,10 +227,11 @@ int main(int argc, char **argv)
 		{
 
 			char nazwa_pliku[BUFFER];
-			sprintf(nazwa_pliku, "%s_%d", s, j + 1);
+			sprintf(nazwa_pliku, "%s_%d", s, j);
 			out = fopen(nazwa_pliku, "w");
 		}
 		wyswietl(plansza, &mrowka, m, n, out);
+
 		printf("\n");
 		printf("\n");
 		printf("\n");
